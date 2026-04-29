@@ -1,18 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offline - Flappy Rogue</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flappy Rogue - Modo Offline</title>
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-        h1 { color: #facc15; }
-        button { background: #16a34a; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        body { 
+            background: #0f172a; 
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            text-align: center; 
+            padding: 20px;
+        }
+        .container {
+            background: #1e293b;
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 2px solid #334155;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+        }
+        h1 { color: #facc15; margin-top: 0; font-size: 2rem; }
+        p { color: #94a3b8; line-height: 1.6; margin-bottom: 2rem; }
+        .icon { font-size: 4rem; margin-bottom: 1rem; display: block; }
+        button { 
+            background: #16a34a; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        button:hover { background: #15803d; transform: translateY(-2px); }
+        .tip { font-size: 0.8rem; color: #64748b; margin-top: 1rem; }
     </style>
 </head>
 <body>
-    <h1>Offline Mode</h1>
-    <p>Please make sure you have loaded the game at least once while online.</p>
-    <button onclick="window.location.reload()">Retry</button>
+    <div class="container">
+        <span class="icon">🐦</span>
+        <h1>Modo Offline</h1>
+        <p>Parece que você está sem conexão. Para jogar offline, você precisa abrir o jogo pelo menos uma vez enquanto estiver conectado à internet.</p>
+        <button onclick="window.location.reload()">Tentar Novamente</button>
+        <div class="tip">Verifique se você já carregou o jogo hoje!</div>
+    </div>
 </body>
 </html>

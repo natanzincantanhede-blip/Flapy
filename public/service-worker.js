@@ -1,62 +1,78 @@
-const CACHE_NAME = 'flappy-rogue-v5';
-const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './manifest.json',
-  './offline.html',
+const CACHE_NAME = 'flappy-rogue-v8';
+const PRECACHE_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
   'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=VT323&display=swap',
-  'https://aistudiocdn.com/react@^19.2.1',
-  'https://aistudiocdn.com/react-dom@^19.2.1/',
-  'https://aistudiocdn.com/react-dom@^19.2.1/client'
+  'https://fonts.googleapis.com/css2?family=VT323&display=swap'
 ];
 
-// Install Event
+// Install: Pre-cache core assets
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+      return Promise.allSettled(
+        PRECACHE_ASSETS.map(url => cache.add(url))
+      );
     })
   );
 });
 
-// Activate Event
+// Activate: Clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    Promise.all([
-      clients.claim(),
-      caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
-    ])
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
   );
 });
 
-// Fetch Event - Stale-while-revalidate or Cache-first
+// Fetch: Stale-While-Revalidate / Cache First for Offline
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+
+  // For navigation requests: Network First, fallback to cached '/'
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          return response;
+        })
+        .catch(() => caches.match('/'))
+    );
+    return;
+  }
+
+  // Same-origin assets: Cache first, then network (and cache it)
+  // Cross-origin assets: Try cache, then network
   event.respondWith(
     caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
       const fetchPromise = fetch(event.request).then((networkResponse) => {
+        // Cache successful GET responses
         if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
+          const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+            cache.put(event.request, responseClone);
           });
         }
         return networkResponse;
-      }).catch(() => {
-        if (event.request.mode === 'navigate') {
-          return caches.match('./offline.html');
+      }).catch((err) => {
+        // If fetch fails (offline) and no cache, return 503 response
+        if (!cachedResponse) {
+          return new Response('Offline', { status: 503 });
         }
+        return cachedResponse;
       });
 
       return cachedResponse || fetchPromise;
