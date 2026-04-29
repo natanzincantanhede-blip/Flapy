@@ -1,0 +1,6 @@
+{
+  "name": "Flappy Rogue PWA",
+  "description": "A roguelike twist on the classic Flappy Bird. Fully offline support, installable on mobile, and persistent progress.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["offline_support", "pwa"]
+}
