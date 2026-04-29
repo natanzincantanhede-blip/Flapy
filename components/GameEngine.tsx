@@ -1100,8 +1100,17 @@ const GameEngine: React.FC = () => {
                  <div className="flex items-center gap-2 mt-1">
                     <div className="text-yellow-400 font-bold text-lg drop-shadow-sm">✨ {soulOrbs}</div>
                     {highScore > 0 && <div className="text-white/60 text-[10px] px-1.5 py-0.5 bg-black/20 rounded">HI: {highScore}</div>}
-                    {isOffline && <div className="text-red-400 text-[10px] px-1.5 py-0.5 bg-black/40 rounded animate-pulse uppercase">OFFLINE</div>}
-                    {!isOffline && <div className="text-green-400 text-[10px] px-1.5 py-0.5 bg-black/40 rounded uppercase">READY OFFLINE</div>}
+                    {isOffline ? (
+                       <div className="text-orange-400 text-[10px] px-1.5 py-0.5 bg-black/40 rounded uppercase font-bold border border-orange-500/30 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></span>
+                          Offline (Playable)
+                       </div>
+                    ) : (
+                       <div className="text-green-400 text-[10px] px-1.5 py-0.5 bg-black/40 rounded uppercase font-bold border border-green-500/30 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                          Online
+                       </div>
+                    )}
                  </div>
                  <div className="flex flex-col mt-2 gap-1">
                     <div className="flex">
@@ -1159,7 +1168,13 @@ const GameEngine: React.FC = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 z-50 backdrop-blur-[2px]">
             <h1 className="text-6xl md:text-8xl text-yellow-400 font-bold pixel-text mb-4 animate-bounce drop-shadow-[6px_6px_0_#000] text-center">FLAPPY ROGUE</h1>
             <div className="bg-slate-900 text-white p-8 rounded-xl border-4 border-slate-700 shadow-xl text-center min-w-[300px]">
-               <p className="text-xl md:text-2xl mb-4 font-bold animate-pulse text-yellow-200">PRESS SPACE TO START</p>
+               <button 
+                 onClick={() => setGameState(GameState.PLAYING)}
+                 className="mt-2 mb-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-xl shadow-[0_6px_0_0_rgba(22,101,52,1)] active:shadow-none active:translate-y-2 transition-all uppercase text-2xl pointer-events-auto"
+               >
+                 START GAME
+               </button>
+               <p className="text-sm md:text-base text-slate-400 uppercase font-bold mb-4">Press SPACE or Click/Touch to Start</p>
                <div className={`text-xl font-bold mb-4 uppercase ${selectedDifficulty.color}`}>
                   Mode: {selectedDifficulty.name}
                </div>
